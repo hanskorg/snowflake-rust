@@ -1,4 +1,4 @@
 [[package]]
-name = "snowflake"
+name = "snowflake-multi-threaded"
 version = "0.1.0"
 
