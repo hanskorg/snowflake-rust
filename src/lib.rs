@@ -16,13 +16,13 @@
 //! # Examples
 //!
 //! ```
-//! extern crate snowflake_multi_threaded;
-//! use snowflake_multi_threaded::SnowFlakeId;
+//!extern crate snowflake_multi_threaded;
+//!use snowflake_multi_threaded::SnowFlakeId;
 //!
 //! let workerId:i64 = 1;
 //! let datacenterId:i64 = 1;
 //! let mut id_gen = SnowFlakeId::new(workerId,datacenterId);
-//! assert!(id_gen.generate().is_ok());
+//! assert!(id_gen.generate_id().is_ok());
 //! ```
 //!
 //!
