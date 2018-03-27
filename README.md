@@ -7,7 +7,7 @@ Twitter 的id生成器算法snowflake的rust-lang 实现
 
 [![Build Status](https://travis-ci.org/hanskorg/snowflake-rust.svg?branch=master)](https://travis-ci.org/hanskorg/snowflake-rust)
 
-#Usage
+# Usage
 Add this to your `Cargo.toml`:
 
 ```toml
