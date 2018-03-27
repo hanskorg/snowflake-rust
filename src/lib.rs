@@ -13,12 +13,12 @@ use std::time::{SystemTime,SystemTimeError,UNIX_EPOCH};
 
 ///# Examples
 ///
-/// ```
+///
 ///  let workerId:i64 = 1;
 ///  let datacenterId:i64 = 1;
 ///  let mut id_gen = SnowFlakeId::new(workerId,datacenterId);
 ///  assert!(id_gen.generate().is_ok());
-///  ```
+/// 
 ///
 ///
 #[derive(Default, Debug)]
