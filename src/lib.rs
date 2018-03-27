@@ -8,21 +8,30 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//!
+//!Generate id with the  type i64
+//!
+//!
+//!
+//! # Examples
+//!
+//! ```
+//! extern crate snowflake_multi_threaded;
+//! use snowflake_multi_threaded::SnowFlakeId;
+//!
+//! let workerId:i64 = 1;
+//! let datacenterId:i64 = 1;
+//! let mut id_gen = SnowFlakeId::new(workerId,datacenterId);
+//! assert!(id_gen.generate().is_ok());
+//! ```
+//!
+//!
+
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime,SystemTimeError,UNIX_EPOCH};
 
-///# Examples
-///
-///
-///  let workerId:i64 = 1;
-///  let datacenterId:i64 = 1;
-///  let mut id_gen = SnowFlakeId::new(workerId,datacenterId);
-///  assert!(id_gen.generate().is_ok());
-/// 
-///
-///
 #[derive(Default, Debug)]
-struct SnowFlakeId{
+pub struct SnowFlakeId{
 
     twepoch: i64,
 
@@ -44,6 +53,17 @@ struct SnowFlakeId{
 }
 
 impl SnowFlakeId{
+
+    /// Returns the instance of SnowFlakeId
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use snowflake_multi_threaded::SnowFlakeId;
+    ///
+    /// let var = SnowFlakeId::new(1,1);
+    ///
+    /// ```
     pub fn new(workerId:i64, datacenterId:i64)->SnowFlakeId{
         let instance: SnowFlakeId = Default::default();
         SnowFlakeId{
@@ -67,6 +87,17 @@ impl SnowFlakeId{
         }
     }
 
+    /// Return a number type of i64, it will always grow
+    /// `When Clock  moved backwards ,it will be panic`
+    /// # Examples
+    ///
+    /// ```
+    /// use snowflake_multi_threaded::SnowFlakeId;
+    ///
+    /// let var = SnowFlakeId::new(1,1).generate_id();
+    ///
+    /// println!("the new id is {}", var.unwrap());
+    /// ```
     pub fn generate_id(&mut self) -> Result<i64,SystemTimeError> {
         let mut last_timestamp = self.last_timestamp.lock().unwrap();
         let mut timestamp = SnowFlakeId::curr_time()?;
