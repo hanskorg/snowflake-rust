@@ -101,7 +101,7 @@ impl SnowFlakeId{
         let mut last_timestamp = self.last_timestamp.lock().unwrap();
         let mut timestamp = SnowFlakeId::curr_time()?;
         if timestamp < *last_timestamp {
-            panic!("Clock moved backwards.  Refusing to generate id for {} milliseconds", *last_timestamp);
+            panic!("Clock moved backwards.  Refusing to generate id for {} - {} milliseconds", timestamp, *last_timestamp);
         }
         if timestamp == *last_timestamp {
             self.sequence = (self.sequence + 1) & self.sequence_mask;
@@ -133,7 +133,7 @@ impl SnowFlakeId{
     fn curr_time() -> Result<i64, SystemTimeError>{
         let elapsed    = SystemTime::now().duration_since(UNIX_EPOCH)? ;
         let unix_timestamp = elapsed.as_secs();
-        Ok((unix_timestamp * 1_000 | (elapsed.subsec_nanos() / 1_000_000) as u64) as i64)
+        Ok((unix_timestamp * 1_000 + (elapsed.subsec_nanos() / 1_000_000) as u64) as i64)
     }
 }
 
