@@ -16,7 +16,6 @@
 //! # Examples
 //!
 //! ```
-//!extern crate snowflake_multi_threaded;
 //!use snowflake_multi_threaded::SnowFlakeId;
 //!
 //! let workerId:i64 = 1;
