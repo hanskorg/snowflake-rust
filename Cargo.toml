@@ -6,7 +6,7 @@ repository = "https://github.com/hanskorg/snowflake-rust.git"
 homepage = "https://github.com/hanskorg/snowflake-rust.git"
 license = "MIT"
 readme = "README.md"
-documentation = ""
+documentation = "https://github.com/hanskorg/snowflake-rust/blob/master/README.md"
 description = "The rust-lang implementation of Twitter's id generator algorithm snowflake, it thread safety | Twitter 的id生成器算法snowflake的rust-lang 实现"
 [dependencies]
 #error-chain = "0.11.0"
