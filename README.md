@@ -5,6 +5,8 @@ this project is rust-lang implementation of Twitter's id generator algorithm sno
 
 Twitter 的id生成器算法snowflake的rust-lang 实现
 
+[![Build Status](https://travis-ci.org/hanskorg/snowflake-rust.svg?branch=master)](https://travis-ci.org/hanskorg/snowflake-rust)
+
 #Usage
 Add this to your `Cargo.toml`:
 
