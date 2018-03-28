@@ -7,8 +7,6 @@
 // <LICENSE-MIT or http://opensource.org/licenses/MIT>, at your
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
-
-//!
 //!Generate id with the  type i64
 //!
 //!
@@ -18,16 +16,16 @@
 //! ```
 //!use snowflake_multi_threaded::SnowFlakeId;
 //!
-//! let workerId:i64 = 1;
-//! let datacenterId:i64 = 1;
-//! let mut id_gen = SnowFlakeId::new(workerId,datacenterId);
+//! let worker_id:i64 = 1;
+//! let datacenter_id:i64 = 1;
+//! let mut id_gen = SnowFlakeId::new(worker_id,datacenter_id);
 //! assert!(id_gen.generate_id().is_ok());
 //! ```
 //!
 //!
+extern crate time;
 
 use std::sync::{Arc, Mutex};
-use std::time::{SystemTime,SystemTimeError,UNIX_EPOCH};
 
 #[derive(Default, Debug)]
 pub struct SnowFlakeId{
@@ -63,8 +61,7 @@ impl SnowFlakeId{
     /// let var = SnowFlakeId::new(1,1);
     ///
     /// ```
-    pub fn new(workerId:i64, datacenterId:i64)->SnowFlakeId{
-        let instance: SnowFlakeId = Default::default();
+    pub fn new(worker_id:i64, datacenter_id:i64)->SnowFlakeId{
         SnowFlakeId{
             twepoch:1514736000_000i64,
 
@@ -72,8 +69,8 @@ impl SnowFlakeId{
             datacenter_id_bits:5,
             sequence_bits :12,
 
-            worker_id      : workerId,
-            datacenter_id : datacenterId,
+            worker_id      : worker_id,
+            datacenter_id : datacenter_id,
             sequence       : 0i64,
 
             worker_id_shift : 12,
@@ -97,18 +94,18 @@ impl SnowFlakeId{
     ///
     /// println!("the new id is {}", var.unwrap());
     /// ```
-    pub fn generate_id(&mut self) -> Result<i64,SystemTimeError> {
-        let mut last_timestamp = self.last_timestamp.lock().unwrap();
-        let mut timestamp = SnowFlakeId::curr_time()?;
+    pub fn generate_id(&mut self) -> Result<i64,String> {
+        let mut last_timestamp = try!(self.last_timestamp.lock().map_err(|e| e.to_string()));
+        let mut timestamp = SnowFlakeId::curr_time();
         if timestamp < *last_timestamp {
-            panic!("Clock moved backwards.  Refusing to generate id for {} milliseconds", *last_timestamp);
+            return  Err(format!("Clock moved backwards.  Refusing to generate id for {} milliseconds", *last_timestamp));
         }
         if timestamp == *last_timestamp {
             self.sequence = (self.sequence + 1) & self.sequence_mask;
             if self.sequence == 0 {
                 //milliseconds overflow
                 if timestamp == *last_timestamp {
-                    timestamp = self.til_next_millis(*last_timestamp)?;
+                    timestamp = self.til_next_millis(*last_timestamp);
                 }
             }
         } else {
@@ -122,29 +119,23 @@ impl SnowFlakeId{
                 | self.sequence)
     }
 
-    fn til_next_millis(&self, last_timestamp:i64) -> Result<i64,SystemTimeError>{
-        let mut timestamp = SnowFlakeId::curr_time()?;
+    fn til_next_millis(&self, last_timestamp:i64) -> i64{
+        let mut timestamp = SnowFlakeId::curr_time();
         while timestamp <= last_timestamp {
-            timestamp = SnowFlakeId::curr_time()?
+            timestamp = SnowFlakeId::curr_time()
         }
-        Ok(timestamp)
+        timestamp
     }
 
-    fn curr_time() -> Result<i64, SystemTimeError>{
-        let elapsed    = SystemTime::now().duration_since(UNIX_EPOCH)? ;
-        let unix_timestamp = elapsed.as_secs();
-        Ok((unix_timestamp * 1_000 | (elapsed.subsec_nanos() / 1_000_000) as u64) as i64)
+    fn curr_time() -> i64{
+        time::precise_time_ns() as i64
     }
 }
 
 #[cfg(test)]
 mod test {
     use SnowFlakeId;
-    use std::sync::{Arc};
     use std::thread;
-    use std::time::Duration;
-    use std::cell::RefCell;
-    use std::collections::HashSet;
     use std::time::Instant;
 
     #[test]
