@@ -128,7 +128,8 @@ impl SnowFlakeId{
     }
 
     fn curr_time() -> i64{
-        time::precise_time_ns() as i64
+        let ctime = time::get_time();
+        ctime.sec * 1000 + ctime.nsec as i64/ 1000_000
     }
 }
 
