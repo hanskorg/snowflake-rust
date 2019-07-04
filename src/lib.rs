@@ -95,9 +95,9 @@ impl SnowFlakeId{
     /// println!("the new id is {}", var.unwrap());
     /// ```
     pub fn generate_id(&mut self) -> Result<i64,String> {
-        let mut last_timestamp = try!(self.last_timestamp.lock().map_err(|e| e.to_string()));
+        let mut last_timestamp = self.last_timestamp.lock().unwrap();
         let mut timestamp = SnowFlakeId::curr_time();
-        if timestamp < *last_timestamp {
+        if timestamp <  *last_timestamp{
             return  Err(format!("Clock moved backwards.  Refusing to generate id for {} milliseconds", *last_timestamp));
         }
         if timestamp == *last_timestamp {
@@ -111,7 +111,7 @@ impl SnowFlakeId{
         } else {
             self.sequence = 0i64;
         }
-//        println!("{}-<<<{}-{}-{}-{}-{}", self.sequence_mask, self.timestamp_left_shift, (*last_timestamp), self.datacenter_id, self.worker_id, self.sequence);
+        println!("{}-<<<{}-{}-{}-{}-{}", self.sequence_mask, self.timestamp_left_shift, (*last_timestamp), self.datacenter_id, self.worker_id, self.sequence);
         *last_timestamp = timestamp;
         Ok(((timestamp - self.twepoch) << self.timestamp_left_shift)
                 | (self.datacenter_id << self.datacenter_id_shift)
@@ -140,7 +140,7 @@ mod test {
 
     #[test]
     fn loop_test(){
-        let mut id_gen = SnowFlakeId::new(1,1);
+        let mut id_gen = SnowFlakeId::new(2,2);
         println!("{:?}",&id_gen);
         for _ in 1..1000 {
             let t  = &mut id_gen;
@@ -156,10 +156,10 @@ mod test {
             thread::spawn(move || {
                 for _ in 1..1000 {
                     let t  = &mut id_gen;
-                    let new_id = t.generate_id().unwrap();
+                    let _new_id = t.generate_id().unwrap();
                     let id = t.generate_id();
                     assert!(id.is_ok());
-//                    println!("{:?}",id.unwrap());
+                    println!("{:?}",id.unwrap());
                 }
             });
         }
