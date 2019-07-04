@@ -111,7 +111,7 @@ impl SnowFlakeId{
         } else {
             self.sequence = 0i64;
         }
-        println!("{}-<<<{}-{}-{}-{}-{}", self.sequence_mask, self.timestamp_left_shift, (*last_timestamp), self.datacenter_id, self.worker_id, self.sequence);
+        // println!("{}-<<<{}-{}-{}-{}-{}", self.sequence_mask, self.timestamp_left_shift, (*last_timestamp), self.datacenter_id, self.worker_id, self.sequence);
         *last_timestamp = timestamp;
         Ok(((timestamp - self.twepoch) << self.timestamp_left_shift)
                 | (self.datacenter_id << self.datacenter_id_shift)
