@@ -1,6 +1,6 @@
 [package]
 name = "snowflake-multi-threaded"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["hans <hans@hansk.org>"]
 repository = "https://github.com/hanskorg/snowflake-rust.git"
 homepage = "https://github.com/hanskorg/snowflake-rust.git"
